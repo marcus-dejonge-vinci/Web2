@@ -19,5 +19,6 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 };
 
 app.use(errorHandler);
+app.use(express.json());
 
 export default app;
