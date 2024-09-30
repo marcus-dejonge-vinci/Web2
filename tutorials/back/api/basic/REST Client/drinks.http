@@ -35,3 +35,14 @@ Content-Type: application/json
     "volume":0.25,
     "price":4.5    
 }
+
+### Delete a drink
+DELETE {{baseUrl}}/drinks/2
+
+### Update the drink with id 5
+PATCH {{baseUrl}}/drinks/5
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2"
+}
