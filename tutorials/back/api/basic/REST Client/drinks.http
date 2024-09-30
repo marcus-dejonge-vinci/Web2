@@ -25,3 +25,13 @@ Content-Type: application/json
     "volume":0.25,
     "price":4.5    
 }
+
+### Try to create a drink with incomplete data
+POST {{baseUrl}}/drinks
+Content-Type: application/json
+
+{
+    "title":"Missing Data Drink",
+    "volume":0.25,
+    "price":4.5    
+}
