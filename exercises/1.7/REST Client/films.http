@@ -1,0 +1,30 @@
+### Read all films
+GET http://localhost:3000/films
+
+### Read film by id
+GET http://localhost:3000/films/1
+
+### Read films by duration
+GET http://localhost:3000/films/?minimum-duration=170
+
+### Create film
+POST http://localhost:3000/films
+Content-Type: application/json
+
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "duration": 175,
+    "budget": 6000000
+}
+
+### Update film
+PATCH http://localhost:3000/films/1
+Content-Type: application/json
+
+{
+    "title": "TestN1"
+}
+
+### Delete film
+DELETE http://localhost:3000/films/1
