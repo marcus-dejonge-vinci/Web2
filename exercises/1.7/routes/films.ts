@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { Film } from "../types";
 import { newFilm } from "../types";
+import path from 'node:path';
+import {parse, serialize} from "../utils/json";
+const jsondbPath = path.join(__dirname, "/../data/films.json");
 
-const films: Film[] = [
+const defaultFilms: Film[] = [
     {
         id: 1,
         title: "L'Odyssée Interstellaire",
@@ -45,12 +48,12 @@ router.use((_req, _res, next) => {
 });
 
 router.get("/", (req, res) => {
+    const films = parse(jsondbPath, defaultFilms);
     if (!("minimum-duration" in req.query) || typeof req.query["minimum-duration"] !== "string") {
       return res.json(films);
     }  
     
     const minDurationString: string = req.query["minimum-duration"];
-
     const minDuration = Number.parseInt(minDurationString);
 
     console.log("minDuration : "+ minDuration);
@@ -64,6 +67,7 @@ router.get("/", (req, res) => {
 
   router.get("/:id", (req, res) => {
     const id = Number(req.params.id);
+    const films  = parse(jsondbPath, defaultFilms);
     const film = films.find((film) => film.id === id);
     if (!film) {
       return res.sendStatus(404).json({ error: "Film not found" });
@@ -88,6 +92,8 @@ router.get("/", (req, res) => {
 
     const {title, director, duration, budget, description, imageUrl} = body;
 
+    const films = parse(jsondbPath, defaultFilms);
+
     const nextId =
     films.reduce((maxId, film) => (film.id > maxId ? film.id : maxId), 0) + 1;
 
@@ -101,28 +107,32 @@ router.get("/", (req, res) => {
         imageUrl
     };
 
-    for (const film of films) {
+    for (const film of defaultFilms) {
         if (film.title === title && film.director === director) {
           return res.status(409).json({ error: "Film already exists" });
         }
     }
 
-    films.push(newFilm);
+    defaultFilms.push(newFilm);
+    serialize(jsondbPath, films);
     return res.status(201).json(newFilm);
   });
 
   router.delete("/:id", (req, res) => {
     const id = Number(req.params.id);
+    const films = parse(jsondbPath, defaultFilms);
     const filmIndex = films.findIndex((film) => film.id === id);
     if (filmIndex === -1) {
       return res.sendStatus(404).json({ error: "Film not found" });
     }
-    films.splice(filmIndex, 1);
-    return res.sendStatus(204);
+    const deletedElements = films.splice(filmIndex, 1);
+    serialize(jsondbPath, films);
+    return res.json(deletedElements[0]);
   });
 
   router.patch("/:id", (req, res) => {
     const id = Number(req.params.id);
+    const films = parse(jsondbPath, defaultFilms);
     const film = films.find((film) => film.id === id);
     if(!film){
         return res.sendStatus(404).json({error: "Film not found"});
@@ -164,6 +174,8 @@ router.get("/", (req, res) => {
     if(imageUrl){
         film.imageUrl = imageUrl;
     }
+
+    serialize(jsondbPath, films);
 
     return res.json(film);
   });

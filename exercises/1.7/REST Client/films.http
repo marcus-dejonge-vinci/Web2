@@ -27,4 +27,4 @@ Content-Type: application/json
 }
 
 ### Delete film
-DELETE http://localhost:3000/films/1
+DELETE http://localhost:3000/films/3
